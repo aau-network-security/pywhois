@@ -26,21 +26,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
-
 from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
 from future import standard_library
-
-import os
-import optparse
-import socket
-import sys
-import re
-from builtins import object
-from builtins import *
 standard_library.install_aliases()
+from builtins import *
+from builtins import object
+import re
+import sys
+import socket
+import optparse
 
 
 class NICClient(object):
@@ -62,37 +59,13 @@ class NICClient(object):
     IANAHOST = "whois.iana.org"
     PANDIHOST = "whois.pandi.or.id"
     DENICHOST = "de.whois-servers.net"
-    AI_HOST = "whois.nic.ai"
-    AR_HOST = "whois.nic.ar"
-    BY_HOST = "whois.cctld.by"
-    HR_HOST = "whois.dns.hr"
-    APP_HOST = "whois.nic.google"
-    DEV_HOST = "whois.nic.google"
-    GAMES_HOST = "whois.nic.games"
-    PAGE_HOST = "whois.nic.page"
-    CL_HOST = "whois.nic.cl"
-    CR_HOST = "whois.nic.cr"
-    DE_HOST = "whois.denic.de"
-    DK_HOST = "whois.dk-hostmaster.dk"
-    DO_HOST = "whois.nic.do"
-    CA_HOST = "whois.ca.fury.ca"
-    HK_HOST = "whois.hkirc.hk"
-    HN_HOST = "whois.nic.hn"
-    KZ_HOST = "whois.nic.kz"
+    AI_HOST = "whois.ai"
     DEFAULT_PORT = "nicname"
-    MONEY_HOST = "whois.nic.money"
-    JOBS_HOST = "whois.nic.jobs"
-    LAT_HOST = "whois.nic.lat"
-    LI_HOST = "whois.nic.li"
-    MX_HOST = "whois.mx"
-    PE_HOST = "kero.yachay.pe"
-    ONLINE_HOST = "whois.nic.online"
-    IST_HOST = "whois.afilias-srs.net"
 
     WHOIS_RECURSE = 0x01
     WHOIS_QUICK = 0x02
 
-    ip_whois = [LNICHOST, RNICHOST, PNICHOST, BNICHOST, PANDIHOST]
+    ip_whois = [LNICHOST, RNICHOST, PNICHOST, BNICHOST,PANDIHOST]
 
     def __init__(self):
         self.use_qnichost = False
@@ -102,7 +75,7 @@ class NICClient(object):
         whois server for getting contact details.
         """
         nhost = None
-        match = re.compile('Domain Name: {}\s*.*?Whois Server: (.*?)\s'.format(query), flags=re.IGNORECASE | re.DOTALL).search(buf)
+        match = re.compile('Domain Name: {}\s*.*?Whois Server: (.*?)\s'.format(query), flags=re.IGNORECASE|re.DOTALL).search(buf)
         if match:
             nhost = match.groups()[0]
             # if the whois address is domain.tld/something then
@@ -116,6 +89,7 @@ class NICClient(object):
                     break
         return nhost
 
+
     def whois(self, query, hostname, flags, many_results=False):
         """Perform initial lookup with TLD whois server
         then, if the quick flag is false, search that result
@@ -123,65 +97,40 @@ class NICClient(object):
         there for contact details
         """
         response = b''
-        if "SOCKS" in os.environ:
-            try:
-                import socks
-            except ImportError as e:
-                print("You need to install the Python socks module. Install PIP (https://bootstrap.pypa.io/get-pip.py) and then 'pip install PySocks'")
-                raise e
-            socks_user, socks_password = None, None
-            if "@" in os.environ["SOCKS"]:
-                creds, proxy = os.environ["SOCKS"].split("@")
-                socks_user, socks_password = creds.split(":")
-            else:
-                proxy = os.environ["SOCKS"]
-            socksproxy, port = proxy.split(":")
-            socks_proto = socket.AF_INET
-            if socket.AF_INET6 in [sock[0] for sock in socket.getaddrinfo(socksproxy, port)]:
-                socks_proto=socket.AF_INET6
-            s = socks.socksocket(socks_proto)
-            s.set_proxy(socks.SOCKS5, socksproxy, int(port), True, socks_user, socks_password)
-        else:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(10)
-        try: # socket.connect in a try, in order to allow things like looping whois on different domains without stopping on timeouts: https://stackoverflow.com/questions/25447803/python-socket-connection-exception
-            s.connect((hostname, 43))
-            try:
-                query = query.decode('utf-8')
-            except UnicodeEncodeError:
-                pass  # Already Unicode (python2's error)
-            except AttributeError:
-                pass  # Already Unicode (python3's error)
+        s.connect((hostname, 43))
 
-            if hostname == NICClient.DENICHOST:
-                query_bytes = "-T dn,ace -C UTF-8 " + query
-            elif hostname == NICClient.DK_HOST:
-                query_bytes = " --show-handles " + query
-            elif hostname.endswith(NICClient.QNICHOST_TAIL) and many_results:
-                query_bytes = '=' + query
-            else:
-                query_bytes = query
-            s.send(bytes(query_bytes, 'utf-8') + b"\r\n")
-            # recv returns bytes
-            while True:
-                d = s.recv(4096)
-                response += d
-                if not d:
-                    break
-            s.close()
+        try:
+            query = query.decode('utf-8')
+        except UnicodeEncodeError:
+            pass  # Already Unicode (python2's error)
+        except AttributeError:
+            pass  # Already Unicode (python3's error)
 
-            nhost = None
-            response = response.decode('utf-8', 'replace')
-            if 'with "=xxx"' in response:
-                return self.whois(query, hostname, flags, True)
-            if flags & NICClient.WHOIS_RECURSE and nhost is None:
-                nhost = self.findwhois_server(response, hostname, query)
-            if nhost is not None:
-                response += self.whois(query, nhost, 0)
-        except socket.error as exc: # 'response' is assigned a value (also a str) even on socket timeout
-            print("Error trying to connect to socket: closing socket") 
-            s.close()
-            response = "Socket not responding"   
+        if hostname == NICClient.DENICHOST:
+            query_bytes = "-T dn,ace -C UTF-8 " + query
+        elif hostname.endswith(NICClient.QNICHOST_TAIL) and many_results:
+            query_bytes = '=' + query
+        else:
+            query_bytes = query
+        s.send(bytes(query_bytes,'utf-8') + b"\r\n")
+        # recv returns bytes
+        while True:
+            d = s.recv(4096)
+            response += d
+            if not d:
+                break
+        s.close()
+
+        nhost = None
+        response = response.decode('utf-8', 'replace')
+        if 'with "=xxx"' in response:
+            return self.whois(query, hostname, flags, True)
+        if flags & NICClient.WHOIS_RECURSE and nhost is None:
+            nhost = self.findwhois_server(response, hostname, query)
+        if nhost is not None:
+            response += self.whois(query, nhost, 0)
         return response
 
     def choose_server(self, domain):
@@ -196,8 +145,6 @@ class NICClient(object):
             return NICClient.NORIDHOST
         if domain.endswith("id"):
             return NICClient.PANDIHOST
-        if domain.endswith("hr"):
-            return NICClient.HR_HOST
 
         domain = domain.split('.')
         if len(domain) < 2:
@@ -207,50 +154,6 @@ class NICClient(object):
             return NICClient.ANICHOST
         elif tld == 'ai':
             return NICClient.AI_HOST
-        elif tld == 'app':
-            return NICClient.APP_HOST
-        elif tld == 'dev':
-            return NICClient.DEV_HOST
-        elif tld == 'games':
-            return NICClient.GAMES_HOST
-        elif tld == 'page':
-            return NICClient.PAGE_HOST
-        elif tld == 'money':
-            return NICClient.MONEY_HOST
-        elif tld == 'online':
-            return NICClient.ONLINE_HOST
-        elif tld == 'cl':
-            return NICClient.CL_HOST
-        elif tld == 'ar':
-            return NICClient.AR_HOST
-        elif tld == 'by':
-            return NICClient.BY_HOST
-        elif tld == 'cr':
-            return NICClient.CR_HOST
-        elif tld == 'ca':
-            return NICClient.CA_HOST
-        elif tld == 'do':
-            return NICClient.DO_HOST
-        elif tld == 'de':
-            return NICClient.DE_HOST
-        elif tld == 'hk':
-            return NICClient.HK_HOST
-        elif tld == 'hn':
-            return NICClient.HN_HOST
-        elif tld == 'jobs':
-            return NICClient.JOBS_HOST
-        elif tld == 'lat':
-            return NICClient.LAT_HOST
-        elif tld == 'li':
-            return NICClient.LI_HOST
-        elif tld == 'mx':
-            return NICClient.MX_HOST
-        elif tld == 'pe':
-            return NICClient.PE_HOST
-        elif tld == 'ist':
-            return NICClient.IST_HOST
-        elif tld == 'kz':
-            return NICClient.KZ_HOST
         else:
             return tld + NICClient.QNICHOST_TAIL
 
@@ -346,8 +249,8 @@ def parse_command_line(argv):
                       const=NICClient.SNICHOST, dest="whoishost",
                       help="Lookup using host " + NICClient.SNICHOST)
     parser.add_option("-n", "--ina", action="store_const",
-                      const=NICClient.PANDIHOST, dest="whoishost",
-                      help="Lookup using host " + NICClient.PANDIHOST)
+                          const=NICClient.PANDIHOST, dest="whoishost",
+                          help="Lookup using host " + NICClient.PANDIHOST)
     parser.add_option("-?", "--help", action="help")
 
     return parser.parse_args(argv)

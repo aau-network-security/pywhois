@@ -1,7 +1,7 @@
 import sys, os
 import setuptools
 
-version = '0.7.2'
+version = '0.6.8'
 
 setuptools.setup(
     name='python-whois',
@@ -17,14 +17,12 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Topic :: Internet :: WWW/HTTP',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3',
+        'Topic :: Internet :: WWW/HTTP'
     ],
     keywords='whois, python',
     author='Richard Penman',
-    author_email='richard.penman@gmail.com',
-    url='https://github.com/richardpenman/pywhois',
+    author_email='richard@webscraping.com',
+    url='https://bitbucket.org/richardpenman/pywhois',
     license='MIT',
     packages=['whois'],
     package_dir={'whois':'whois'},
