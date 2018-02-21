@@ -47,13 +47,38 @@ class TestParser(unittest.TestCase):
         parse it, and compare to the expected values in sample/expected/.
         Only keys defined in keys_to_test will be tested.
 
-        To generate fresh expected value dumps, see NOTE below.
+        To generate fresh expected value dumps, see NOTE below and set
+        generate_expected=True.
         """
         keys_to_test = ['domain_name', 'expiration_date', 'updated_date',
                         'creation_date', 'status']
+        self._test_samples('*', keys_to_test)
+
+    def test_dk_samples(self):
+        """
+        Iterate over all .dk samples (sample/whois/*.dk), check all keys.
+        """
+        self._test_samples('*.dk')
+
+    def _test_samples(
+            self,
+            glob_pattern,
+            keys_to_test=None,
+            generate_expected=False,
+    ):
+        """
+        Iterate over all of the sample/whois/<glob_pattern> files, read the data,
+        parse it, and compare to the expected values in sample/expected/.
+
+        If keys_to_test is given; Only keys defined in keys_to_test
+        will be tested.
+
+        To generate fresh expected value dumps, see NOTE below and set
+        generate_expected=True.
+        """
         fail = 0
         total = 0
-        whois_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'samples','whois','*')
+        whois_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'samples','whois',glob_pattern)
         expect_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'samples','expected')
         for path in glob(whois_path):
             # Parse whois data
@@ -62,13 +87,15 @@ class TestParser(unittest.TestCase):
                 data = whois_fp.read()
 
             w = WhoisEntry.load(domain, data)
-            results = {key: w.get(key) for key in keys_to_test}
+            results = w
+            if keys_to_test is not None:
+                results = {key: w.get(key) for key in keys_to_test}
 
             # NOTE: Toggle condition below to write expected results from the
             # parse results This will overwrite the existing expected results.
             # Only do this if you've manually confirmed that the parser is
             # generating correct values at its current state.
-            if False:
+            if generate_expected:
                 def date2str4json(obj):
                     if isinstance(obj, datetime.datetime):
                         return str(obj)
@@ -84,8 +111,12 @@ class TestParser(unittest.TestCase):
             with open(os.path.join(expect_path, domain)) as infil:
                 expected_results = json.load(infil)
 
-            # Compare each key
-            for key in set(results).union(set(expected_results)):
+            # Compare each key in any of results and expected_results
+            compare_keys = set.union(set(results), set(expected_results))
+            if keys_to_test is not None:
+                # ... but only those in keys_to_test
+                compare_keys = compare_keys.intersection(set(keys_to_test))
+            for key in compare_keys:
                 total += 1
                 if key not in results:
                     print("%s \t(%s):\t Missing in results" % (domain, key,))

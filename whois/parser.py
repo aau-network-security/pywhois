@@ -1243,12 +1243,26 @@ class WhoisDk(WhoisEntry):
     """Whois parser for .dk domains
     """
     regex = {
-        'domain_name':     'Domain: *(.+)',
-        'creation_date':   'Registered: *(.+)',
-        'expiration_date': 'Expires: *(.+)',
-        'dnssec':          'Dnssec: *(.+)',
-        'status':          'Status: *(.+)',
-        'name_servers':     'Nameservers\n *([\n\S\s]+)'
+        'domain_name':              'Domain: *(.+)',
+        'creation_date':            'Registered: *(.+)',
+        'expiration_date':          'Expires: *(.+)',
+        'registration_period':      'Registration period: *(.+)',
+        'vid':                      'VID: *(.+)',
+        'dnssec':                   'Dnssec: *(.+)',
+        'status':                   'Status: *(.+)',
+        'registrant_handle':        'Registrant\n(?:.+:.+\n)*Handle: *(.+)',
+        'registrant_name':          'Registrant\n(?:.+:.+\n)*Name: *(.+)',
+        'registrant_address':       'Registrant\n(?:.+:.+\n)*Address: *(.+)',
+        'registrant_postalcode':    'Registrant\n(?:.+:.+\n)*Postalcode: *(.+)',
+        'registrant_city':          'Registrant\n(?:.+:.+\n)*City: *(.+)',
+        'registrant_country':       'Registrant\n(?:.+:.+\n)*Country: *(.+)',
+        'administrator_handle':     'Administrator\n(?:.+:.+\n)*Handle: *(.+)',
+        'administrator_name':       'Administrator\n(?:.+:.+\n)*Name: *(.+)',
+        'administrator_address':    'Administrator\n(?:.+:.+\n)*Address: *(.+)',
+        'administrator_postalcode': 'Administrator\n(?:.+:.+\n)*Postalcode: *(.+)',
+        'administrator_city':       'Administrator\n(?:.+:.+\n)*City: *(.+)',
+        'administrator_country':    'Administrator\n(?:.+:.+\n)*Country: *(.+)',
+        # 'name_servers':     'Nameservers\n *([\n\S\s]+)'
     }
 
     def __init__(self, domain, text):

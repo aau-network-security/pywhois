@@ -1,0 +1,21 @@
+{
+    "domain_name":               "dk-hostmaster.dk",
+    "creation_date":             "1998-01-19 00:00:00",
+    "expiration_date":           "2022-03-31 00:00:00",
+    "registration_period":       "5 years",
+    "vid":                       "yes",
+    "dnssec":                    "Signed delegation",
+    "status":                    "Active",
+    "registrant_handle":         "DKHM1-DK",
+    "registrant_name":           "DK HOSTMASTER A/S",
+    "registrant_address":        "Ørestads Boulevard 108, 11.",
+    "registrant_postalcode":     "2300",
+    "registrant_city":           "København S",
+    "registrant_country":        "DK",
+    "administrator_handle":      "DKHM1-DK",
+    "administrator_name":        "DK HOSTMASTER A/S",
+    "administrator_address":     "Ørestads Boulevard 108, 11.",
+    "administrator_postalcode":  "2300",
+    "administrator_city":        "København S",
+    "administrator_country":     "DK"
+}
