@@ -179,104 +179,105 @@ class WhoisEntry(dict):
         """Given whois output in ``text``, return an instance of ``WhoisEntry``
         that represents its parsed contents.
         """
-        if text.strip() == 'No whois server is known for this kind of object.':
-            raise PywhoisError(text)
-
         if domain.endswith('.com'):
-            return WhoisCom(domain, text)
+            return WhoisCom(domain, text.decode())
         elif domain.endswith('.net'):
-            return WhoisNet(domain, text)
+            return WhoisNet(domain, text.decode())
         elif domain.endswith('.org'):
-            return WhoisOrg(domain, text)
+            return WhoisOrg(domain, text.decode())
         elif domain.endswith('.name'):
-            return WhoisName(domain, text)
+            return WhoisName(domain, text.decode())
         elif domain.endswith('.me'):
-            return WhoisMe(domain, text)
+            return WhoisMe(domain, text.decode())
         elif domain.endswith('.au'):
-            return WhoisAU(domain, text)
+            return WhoisAU(domain, text.decode())
         elif domain.endswith('.ru'):
-            return WhoisRu(domain, text)
+            return WhoisRu(domain, text.decode())
         elif domain.endswith('.us'):
-            return WhoisUs(domain, text)
+            return WhoisUs(domain, text.decode())
         elif domain.endswith('.uk'):
-            return WhoisUk(domain, text)
+            return WhoisUk(domain, text.decode())
         elif domain.endswith('.fr'):
-            return WhoisFr(domain, text)
+            return WhoisFr(domain, text.decode())
         elif domain.endswith('.nl'):
-            return WhoisNl(domain, text)
+            return WhoisNl(domain, text.decode())
         elif domain.endswith('.fi'):
-            return WhoisFi(domain, text)
+            return WhoisFi(domain, text.decode())
         elif domain.endswith('.jp'):
-            return WhoisJp(domain, text)
+            return WhoisJp(domain, text.decode())
         elif domain.endswith('.pl'):
-            return WhoisPl(domain, text)
+            return WhoisPl(domain, text.decode())
         elif domain.endswith('.br'):
-            return WhoisBr(domain, text)
+            return WhoisBr(domain, text.decode())
         elif domain.endswith('.eu'):
-            return WhoisEu(domain, text)
+            return WhoisEu(domain, text.decode())
         elif domain.endswith('.ee'):
-            return WhoisEe(domain, text)
+            return WhoisEe(domain, text.decode())
         elif domain.endswith('.kr'):
-            return WhoisKr(domain, text)
+            return WhoisKr(domain, text.decode())
         elif domain.endswith('.pt'):
-            return WhoisPt(domain, text)
+            return WhoisPt(domain, text.decode('UTF-8'))
         elif domain.endswith('.bg'):
-            return WhoisBg(domain, text)
+            return WhoisBg(domain, text.decode())
         elif domain.endswith('.de'):
-            return WhoisDe(domain, text)
+            return WhoisDe(domain, text.decode())
         elif domain.endswith('.at'):
-            return WhoisAt(domain, text)
+            return WhoisAt(domain, text.decode())
         elif domain.endswith('.ca'):
-            return WhoisCa(domain, text)
+            return WhoisCa(domain, text.decode())
         elif domain.endswith('.be'):
-            return WhoisBe(domain, text)
+            return WhoisBe(domain, text.decode())
         elif domain.endswith('.рф'):
-            return WhoisRf(domain, text)
+            return WhoisRf(domain, text.decode())
         elif domain.endswith('.info'):
-            return WhoisInfo(domain, text)
+            return WhoisInfo(domain, text.decode())
         elif domain.endswith('.su'):
-            return WhoisSu(domain, text)
+            return WhoisSu(domain, text.decode())
         elif domain.endswith('.kg'):
-            return WhoisKg(domain, text)
+            return WhoisKg(domain, text.decode())
         elif domain.endswith('.io'):
-            return WhoisIo(domain, text)
+            return WhoisIo(domain, text.decode())
         elif domain.endswith('.biz'):
-            return WhoisBiz(domain, text)
+            return WhoisBiz(domain, text.decode())
         elif domain.endswith('.mobi'):
-            return WhoisMobi(domain, text)
+            return WhoisMobi(domain, text.decode())
         elif domain.endswith('.ch'):
-            return WhoisChLi(domain, text)
+            return WhoisChLi(domain, text.decode())
         elif domain.endswith('.li'):
-            return WhoisChLi(domain, text)
+            return WhoisChLi(domain, text.decode())
         elif domain.endswith('.id'):
-            return WhoisID(domain, text)
+            return WhoisID(domain, text.decode())
         elif domain.endswith('.sk'):
-            return WhoisSK(domain, text)
+            return WhoisSK(domain, text.decode())
         elif domain.endswith('.se'):
-            return WhoisSe(domain, text)
+            return WhoisSe(domain, text.decode())
         elif domain.endswith('.nu'):
-            return WhoisSe(domain, text)
+            return WhoisSe(domain, text.decode())
         elif domain.endswith('.is'):
-            return WhoisIs(domain, text)
+            return WhoisIs(domain, text.decode())
         elif domain.endswith('.dk'):
-            return WhoisDk(domain, text)
+            return WhoisDk(domain, text.decode('UTF-8'))
         elif domain.endswith('.it'):
-            return WhoisIt(domain, text)
+            return WhoisIt(domain, text.decode())
         elif domain.endswith('.ai'):
-            return WhoisAi(domain, text)
+            return WhoisAi(domain, text.decode())
         elif domain.endswith('.il'):
-            return WhoisIl(domain, text)
+            return WhoisIl(domain, text.decode())
         elif domain.endswith('.in'):
-            return WhoisIn(domain, text)
+            return WhoisIn(domain, text.decode())
         elif domain.endswith('.cat'):
-            return WhoisCat(domain, text)
+            return WhoisCat(domain, text.decode())
         elif domain.endswith('.ie'):
-            return WhoisIe(domain, text)
+            return WhoisIe(domain, text.decode())
         elif domain.endswith('.nz'):
-            return WhoisNz(domain, text)
+            return WhoisNz(domain, text.decode())
         elif domain.endswith('.space'):
-            return WhoisSpace(domain, text)
+            return WhoisSpace(domain, text.decode())
         else:
+            # Check if we can read an error assuming ASCII encoding
+            if text.decode().strip() == 'No whois server is known for this kind of object.':
+                raise PywhoisError(text)
+
             return WhoisEntry(domain, text)
 
 

@@ -33,7 +33,7 @@ def whois(url, command=False):
     if command:
         # try native whois command
         r = subprocess.Popen(['whois', domain], stdout=subprocess.PIPE)
-        text = r.stdout.read().decode()
+        text = r.stdout.read()
     else:
         # try builtin client
         nic_client = NICClient()
