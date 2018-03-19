@@ -1262,7 +1262,7 @@ class WhoisDk(WhoisEntry):
         'administrator_postalcode': 'Administrator\n(?:.+:.+\n)*Postalcode: *(.+)',
         'administrator_city':       'Administrator\n(?:.+:.+\n)*City: *(.+)',
         'administrator_country':    'Administrator\n(?:.+:.+\n)*Country: *(.+)',
-        # 'name_servers':     'Nameservers\n *([\n\S\s]+)'
+        'nameservers':              'Nameservers\n *([\n\S\s]+)',
     }
 
     def __init__(self, domain, text):
@@ -1270,6 +1270,14 @@ class WhoisDk(WhoisEntry):
             raise PywhoisError(text)
         else:
             WhoisEntry.__init__(self, domain, text, self.regex)
+
+    def _preprocess(self, attr, value):
+        if attr == 'nameservers':
+            value = dict(re.findall('Hostname: *(.+)\nHandle: *(.+)', value))
+            # No need to pass list to super._preprocess,
+            # which can't handle a list; `value.strip()`
+            return value
+        return super(WhoisDk, self)._preprocess(attr, value)
 
 class WhoisAi(WhoisEntry):
     """Whois parser for .ai domains

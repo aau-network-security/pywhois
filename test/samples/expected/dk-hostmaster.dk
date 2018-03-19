@@ -17,5 +17,10 @@
     "administrator_address":     "Ørestads Boulevard 108, 11.",
     "administrator_postalcode":  "2300",
     "administrator_city":        "København S",
-    "administrator_country":     "DK"
+    "administrator_country":     "DK",
+    "nameservers":		 {
+                                     "auth01.ns.dk-hostmaster.dk": "DKHM1-DK",
+                                     "auth02.ns.dk-hostmaster.dk": "DKHM1-DK",
+                                     "p.nic.dk":                   "DKHM1-DK"
+                                 }
 }
