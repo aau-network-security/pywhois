@@ -31,7 +31,7 @@ class TestParser(unittest.TestCase):
 
         >>> Last update of whois database: Sun, 31 Aug 2008 00:18:23 UTC <<<
         """
-        w = WhoisEntry.load('urlowl.com', data)
+        w = WhoisEntry.load('urlowl.com', data.encode('ASCII'))
         expires = w.expiration_date.strftime('%Y-%m-%d')
         self.assertEqual(expires, '2018-02-21')
 
@@ -331,7 +331,7 @@ class TestParser(unittest.TestCase):
         self._parse_and_compare('rte.ie', data, expected_results)
 
     def _parse_and_compare(self, domain_name, data, expected_results):
-        results = WhoisEntry.load(domain_name, data)
+        results = WhoisEntry.load(domain_name, data.encode('ASCII'))
         fail = 0
         total = 0
         # Compare each key
