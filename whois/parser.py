@@ -6,15 +6,8 @@
 # This module is part of pywhois and is released under
 # the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
 from builtins import *
 from builtins import str
-from past.builtins import basestring
 
 import json
 from datetime import datetime
@@ -148,7 +141,7 @@ class WhoisEntry(dict):
 
     def _preprocess(self, attr, value):
         value = value.strip()
-        if value and isinstance(value, basestring) and not value.isdigit() and '_date' in attr:
+        if value and isinstance(value, (bytes, str)) and not value.isdigit() and '_date' in attr:
             # try casting to date format
             value = cast_date(
                 value,

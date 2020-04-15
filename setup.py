@@ -8,9 +8,6 @@ setuptools.setup(
     version=version,
     description="Whois querying and parsing of domain registration information.",
     long_description='',
-    install_requires=[
-        'future',
-    ],
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
